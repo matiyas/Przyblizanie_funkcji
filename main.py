@@ -6,24 +6,22 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.interpolate import lagrange
 
-
-x = np.arange(0, 10)
+x = np.linspace(0, 9, num=10, endpoint=True)
 y = np.sin(x)
-l1 = plt.plot(x, y, marker='.', color='b', markersize=12, linestyle='None')
-
 linear = interp1d(x, np.sin(x), kind="linear")
-x = np.arange(0, 10, 0.1)
-lagrange = lagrange(x, np.sin(x))
+lagr = lagrange(x, np.sin(x))
 nearest = interp1d(x, np.sin(x), kind="nearest")
 zero = interp1d(x, np.sin(x), kind="zero")
 
-plt.plot(x, linear(x))
-plt.plot(x, lagrange(x))
-plt.plot(x, nearest(x))
-plt.plot(x, zero(x))
+xnew = np.linspace(0, 9, num=100, endpoint=True)
+plt.plot(x, y, '.b', markersize=8)
+plt.plot(xnew, linear(xnew), '-r')
+plt.plot(xnew, lagr(xnew), '-b')
+plt.plot(xnew, nearest(xnew), '-y')
+plt.plot(xnew, zero(xnew), '-c')
 
 plt.xlabel(u"Wartości $x$", fontsize=23)
 plt.ylabel(u"Interpolacja wartości $y$", fontsize=23)
 plt.grid(color=(0.7, 0.8, 1.0), linestyle="solid")
-plt.legend((l1, linear, lagrange, nearest, zero), ("punkty", "linear", "Lagrange", "nearest", "zero"), loc="lower left", ncol=1)
+plt.legend(("punkty", "linear", "Lagrange", "nearest", "zero"), loc="lower left", ncol=1)
 plt.show()
