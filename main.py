@@ -56,6 +56,7 @@ def zero_interpolation(list_x, list_y):
 
 
 def main():
+    """Funkcja prezentująca działanie różnych funkcji interpolacji"""
     x = np.linspace(1, 10, num=10, endpoint=True)
     y = np.sin(x)
 
