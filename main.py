@@ -5,36 +5,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def lagrange_interpolation(list_x, list_y):
-    """Funkcja zwraca funkcję będącą interpolacją liniową funkcji podanej w postaci wartości x, oraz y.
+def interpolate(list_x, list_y, kind):
+    """Funkcja zwraca funkcję będącą interpolacją, typu podanego w argumencie, funkcji podanej w postaci wartości x, oraz y.
         
     Argumenty:
         list_x (list):  Lista wartości x interpolowanej funkcji.
         list_y (list):  Lista wartości y interpolowanej funkcji.
-    """
-    def interpolation(new_x):
-        """Funkcja zwraca listę wartości y, utworzoną na podstawie podanych wartości x.
-        
-        Argumenty:
-            new_x (list):   Lista argumentów funkcji.
-        """
-        new_y = []
-        vals = zip(list_x, list_y)
-        
-        # Dla każdego nowego punktu x oblicz wartości punktów y interpolacji wielomianowej
-        for x in new_x:
-            new_y.append(sum([yk * np.prod([float(x - xi) / (xk - xi) for xi in list_x if xi != xk]) for xk, yk in vals]))
-
-        return new_y
-    return interpolation
-
-
-def linear_interpolation(list_x, list_y):
-    """Funkcja zwraca funkcję będącą interpolacją liniową funkcji podanej w postaci wartości x, oraz y.
-        
-    Argumenty:
-        list_x (list):  Lista wartości x interpolowanej funkcji.
-        list_y (list):  Lista wartości y interpolowanej funkcji.
+        kind (str):     Typ interpolacji funkcji (linear, lagrange, nearest, zero).
     """
     def interpolation(new_x):
         """Funkcja zwraca listę wartości y, utworzoną na podstawie podanych wartości x.
@@ -44,61 +21,35 @@ def linear_interpolation(list_x, list_y):
         """
         new_y = []
         i = 0
-        for x in new_x:
-            while i + 1 < len(list_x) and x > list_x[i + 1]:
-                i += 1
+
+        if kind == "linear":
+            for x in new_x:
+                while i + 1 < len(list_x) and x > list_x[i + 1]:
+                    i += 1
             
-            # Dodaj punkt znajdujący się pomiędzy dwoma punktami na wykresie, będący współlinowy z tymi punktami
-            if i + 1 < len(list_x):
-                new_y.append(list_y[i] + (list_y[i + 1] - list_y[i]) / (list_x[i + 1] - list_x[i]) * (x - list_x[i]))
-        return new_y
-    return interpolation
+                # Dodaj punkt znajdujący się pomiędzy dwoma punktami na wykresie, będący współlinowy z tymi punktami
+                if i + 1 < len(list_x):
+                    new_y.append(list_y[i] + (list_y[i + 1] - list_y[i]) / (list_x[i + 1] - list_x[i]) * (x - list_x[i]))
 
+        if kind == "lagrange":
+            # Dla każdego nowego punktu x oblicz wartości punktów y interpolacji wielomianowej
+            for x in new_x:
+                new_y.append(sum([yk * np.prod([float(x - xi) / (xk - xi) for xi in list_x if xi != xk]) for xk, yk in zip(list_x, list_y)]))
+        
+        if kind == "nearest":
+            for x in new_x:
+                while i + 1 < len(list_x) and x >= float(list_x[i + 1] - list_x[i]) / 2 + list_x[i]:
+                    i += 1
+                if i < len(list_x):
+                    new_y.append(list_y[i])
+        
+        if kind == "zero":
+            for x in new_x:
+                while i + 1 < len(list_x) and x >= list_x[i + 1]:
+                    i += 1
+                if i < len(list_x):
+                    new_y.append(list_y[i])
 
-def nearest_interpolation(list_x, list_y):
-    """Funkcja zwraca funkcję będącą interpolacją liniową funkcji podanej w postaci wartości x, oraz y.
-        
-    Argumenty:
-        list_x (list):  Lista wartości x interpolowanej funkcji.
-        list_y (list):  Lista wartości y interpolowanej funkcji.
-    """
-    def interpolation(new_x):
-        """Funkcja zwraca listę wartości y, utworzoną na podstawie podanych wartości x.
-        
-        Argumenty:
-            new_x (list):   Lista argumentów funkcji.
-        """
-        new_y = []
-        i = 0
-        for x in new_x:
-            while i + 1 < len(list_x) and x >= float(list_x[i + 1] - list_x[i]) / 2 + list_x[i]:
-                i += 1
-            if i < len(list_x):
-                new_y.append(list_y[i])
-        return new_y
-    return interpolation
-
-
-def zero_interpolation(list_x, list_y):
-    """Funkcja zwraca funkcję będącą interpolacją liniową funkcji podanej w postaci wartości x, oraz y.
-        
-    Argumenty:
-        list_x (list):  Lista wartości x interpolowanej funkcji.
-        list_y (list):  Lista wartości y interpolowanej funkcji.
-    """
-    def interpolation(new_x):
-        """Funkcja zwraca listę wartości y, utworzoną na podstawie podanych wartości x.
-        
-        Argumenty:
-            new_x (list):   Lista argumentów funkcji.
-        """
-        new_y = []
-        i = 0
-        for x in new_x:
-            while i + 1 < len(list_x) and x >= list_x[i + 1]:
-                i += 1
-            if i < len(list_x):
-                new_y.append(list_y[i])
         return new_y
     return interpolation
 
@@ -106,21 +57,21 @@ def zero_interpolation(list_x, list_y):
 def main():
     """Funkcja prezentująca działanie różnych funkcji interpolacji.
     
-    Funkcja wyświetla na ekranie wykres funkcji, na której znajdują się: wybrane punkty z danej funkcji, interpolacja liniowa,
-    interpolacja Lagrange'a, interpolacja nearest, oraz interpolacja zero.
+    Funkcja wyświetla na ekranie wykres funkcji, na której znajdują się: wybrane punkty z danej funkcji, interpolacja liniowa,interpolacja 
+    Lagrange'a, interpolacja nearest, oraz interpolacja zero.
     """
     # Lista punktów funkcji
-    x = np.linspace(1, 10, num=10, endpoint=True)
+    x = np.linspace(0, 9, num=10, endpoint=True)
     y = np.sin(x)
     
     # Interpolacje funkcji
-    linear = linear_interpolation(x, y)
-    lagr = lagrange_interpolation(x, y)
-    nearest = nearest_interpolation(x, y)
-    zero = zero_interpolation(x, y)
+    linear = interpolate(x, y, "linear")
+    lagr = interpolate(x, y, "lagrange")
+    nearest = interpolate(x, y, "nearest")
+    zero = interpolate(x, y, "zero")
 
     # Nowa lista wartości x po której mają zostać rysowane interpolacje
-    xnew = np.linspace(1, 10, num=100, endpoint=True)
+    xnew = np.linspace(0, 9, num=100, endpoint=True)
     
     # Rysuj funkcje na wykresie
     plt.plot(x, y, '.b', markersize=8, label="punkty")
