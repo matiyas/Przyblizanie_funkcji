@@ -5,6 +5,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def my_interpolation(list_x, list_y, kind="linear"):
+    def interpolation(new_x):
+        new_y = []
+        vals = zip(list_x, list_y)
+        i = 0
+        
+        for x in new_x:
+            if kind == "lagrange":
+                new_y.append(sum([yk * np.prod([float(x - xi) / (xk - xi) for xi in list_x if xi != xk]) for xk, yk in vals]))
+            elif kind == "linear" or kind == "zero":
+                while i + 1 < len(list_x) and x >= list_x[i + 1]:
+                    i += 1
+                
+                if i < len(list_x) and (kind == "nearest" or kind == "zero"):
+                    new_y.append(list_y[i])
+                    
+            elif kind == "nearest":
+
+
 def lagrange_interpolation(list_x, list_y):
     """Funkcja zwraca funkcję będącą interpolacją liniową funkcji podanej w postaci wartości x, oraz y.
         
