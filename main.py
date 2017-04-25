@@ -12,6 +12,14 @@ def interpolate(list_x, list_y, kind):
         list_x (list):  Lista wartości x interpolowanej funkcji.
         list_y (list):  Lista wartości y interpolowanej funkcji.
         kind (str):     Typ interpolacji funkcji (linear, lagrange, nearest, zero).
+
+    Przykład użycia:
+        x = numpy.linspace(0, 10, num=10)
+        y = numpy.sin(x)
+        linear = interpolate(x, y, "linear")
+        new_x = numpy.linspace(0, 10, num=100)
+        linear(new_x)
+
     """
     def interpolation(new_x):
         """Funkcja zwraca listę wartości y, utworzoną na podstawie podanych wartości x.
@@ -24,20 +32,23 @@ def interpolate(list_x, list_y, kind):
 
         if kind == "linear":
             for x in new_x:
+                # Szukam wartości x interpolowanej funkcji, równej lub większej od nowej wartości x
                 while i + 1 < len(list_x) and x > list_x[i + 1]:
                     i += 1
             
-                # Dodaj punkt znajdujący się pomiędzy dwoma punktami na wykresie, będący współlinowy z tymi punktami
+                # Oblicz wartość y, która tworzy z nową wartością x punkt współliniowy do dwóch kolejnych punktów interpolowanej funkcji
                 if i + 1 < len(list_x):
                     new_y.append(list_y[i] + (list_y[i + 1] - list_y[i]) / (list_x[i + 1] - list_x[i]) * (x - list_x[i]))
 
         if kind == "lagrange":
             # Dla każdego nowego punktu x oblicz wartości punktów y interpolacji wielomianowej
             for x in new_x:
-                new_y.append(sum([yk * np.prod([float(x - xi) / (xk - xi) for xi in list_x if xi != xk]) for xk, yk in zip(list_x, list_y)]))
+                new_y.append(sum([yk * np.prod([float(x - xi) / (xk - xi) for xi in list_x if xi != xk])
+                             for xk, yk in zip(list_x, list_y)]))
         
         if kind == "nearest":
             for x in new_x:
+                # Szukam wartości x, znajdującego się pomiędzy dwoma kolejnymi punktami interpolowanej funkcji, większego od nowej wartości x
                 while i + 1 < len(list_x) and x >= float(list_x[i + 1] - list_x[i]) / 2 + list_x[i]:
                     i += 1
                 if i < len(list_x):
@@ -45,6 +56,7 @@ def interpolate(list_x, list_y, kind):
         
         if kind == "zero":
             for x in new_x:
+                # Szukam wartości x interpolowanej funkcji, większej od nowej wartości x
                 while i + 1 < len(list_x) and x >= list_x[i + 1]:
                     i += 1
                 if i < len(list_x):
