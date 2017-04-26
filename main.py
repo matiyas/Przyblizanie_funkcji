@@ -6,7 +6,7 @@ import numpy as np
 
 
 def interpolate(list_x, list_y, kind):
-    """Funkcja zwraca funkcję będącą interpolacją, typu podanego w argumencie, funkcji podanej w postaci wartości x, oraz y.
+    """Funkcja zwraca funkcję obliczającą interpolację, typu podanego w argumencie, funkcji podanej w argumentach.
         
     Argumenty:
         list_x (list):  Lista wartości x interpolowanej funkcji.
@@ -22,10 +22,10 @@ def interpolate(list_x, list_y, kind):
 
     """
     def interpolation(new_x):
-        """Funkcja zwraca listę wartości y, utworzoną na podstawie podanych wartości x.
+        """Funkcja zwraca listę wartości y interpolacji funkcji.
         
         Argumenty:
-            new_x (list):   Lista argumentów funkcji.
+            new_x (list):   Lista argumentów interpolacji.
         """
         new_y = []
         i = 0
@@ -36,7 +36,8 @@ def interpolate(list_x, list_y, kind):
                 while i + 1 < len(list_x) and x > list_x[i + 1]:
                     i += 1
             
-                # Oblicz wartość y, która tworzy z nową wartością x punkt współliniowy do dwóch kolejnych punktów interpolowanej funkcji
+                # Oblicz wartość y, która tworzy z nową wartością x punkt współliniowy do
+                # dwóch kolejnych punktów interpolowanej funkcji między którymi się znajduje
                 if i + 1 < len(list_x):
                     new_y.append(list_y[i] + (list_y[i + 1] - list_y[i]) / (list_x[i + 1] - list_x[i]) * (x - list_x[i]))
 
@@ -48,7 +49,8 @@ def interpolate(list_x, list_y, kind):
         
         if kind == "nearest":
             for x in new_x:
-                # Szukam wartości x, znajdującego się pomiędzy dwoma kolejnymi punktami interpolowanej funkcji, większego od nowej wartości x
+                # Szukam wartości x, znajdującego się pomiędzy dwoma kolejnymi
+                # punktami interpolowanej funkcji, większego od nowej wartości x
                 while i + 1 < len(list_x) and x >= float(list_x[i + 1] - list_x[i]) / 2 + list_x[i]:
                     i += 1
                 if i < len(list_x):
